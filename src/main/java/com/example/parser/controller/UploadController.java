@@ -1,6 +1,7 @@
 package com.example.parser.controller;
 
 import com.example.parser.model.Line;
+import com.example.parser.validator.NameValidator;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Controller
 public class UploadController {
+
+    private final NameValidator nameValidator = new NameValidator();
 
     @GetMapping("/")
     public String index() {
@@ -42,18 +48,31 @@ public class UploadController {
                         .build();
 
                 // convert `CsvToBean` object to list of lines
-                List<Line> lines = csvToBean.parse();
+                List<Line> lines = csvToBean.parse().parallelStream().map(function).collect(Collectors.toList());
 
                 // save lines list on model
                 model.addAttribute("lines", lines);
                 model.addAttribute("status", true);
 
             } catch (Exception ex) {
-                model.addAttribute("message", "An error occurred while processing the CSV file: "+ex.getCause().getMessage());
+                model.addAttribute("message", "An error occurred while processing the CSV file: " + ex.getCause().getMessage());
                 model.addAttribute("status", false);
             }
         }
 
         return "file-upload-status";
     }
+
+    Function<Line, Line> function = l -> {
+        StringJoiner sj = new StringJoiner("\n");
+        try {
+            nameValidator.validate(l.getName());
+        } catch (Exception e) {
+            sj.add(e.getMessage());
+        }
+
+        l.setNote(sj.toString());
+        return l;
+    };
+
 }

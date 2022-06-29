@@ -5,6 +5,9 @@ import com.opencsv.bean.validators.MustMatchRegexExpression;
 import com.opencsv.bean.validators.PreAssignmentValidator;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.StringJoiner;
+
 @Data
 public class Line {
 
@@ -23,4 +26,6 @@ public class Line {
 
     @CsvBindByName
     private int age;
+
+    private String note;
 }
