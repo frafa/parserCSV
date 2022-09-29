@@ -4,6 +4,8 @@ import com.example.parser.model.Line;
 import com.example.parser.validator.NameValidator;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +24,8 @@ import java.util.stream.Collectors;
 @Controller
 public class UploadController {
 
-    private final NameValidator nameValidator = new NameValidator();
+    @Autowired
+    private NameValidator nameValidator;
 
     @GetMapping("/")
     public String index() {

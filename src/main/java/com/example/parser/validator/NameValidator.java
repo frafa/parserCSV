@@ -1,8 +1,13 @@
 package com.example.parser.validator;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class NameValidator implements IValidator<String> {
 
-    private final static String REGEXP ="^[A-Za-z\\s]+$";
+    @Value("${validator.regexp}")
+    private String REGEXP;
 
     @Override
     public Boolean isValid(String obj) {
